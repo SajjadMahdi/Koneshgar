@@ -1,0 +1,28 @@
+services:
+  tasksdb:
+    image: postgres
+    container_name: tasksdb
+    restart : always
+    ports:
+      - 5432:5432
+    environment:
+      - "POSTGRES_USER=postgres"
+      - "POSTGRES_PASSWORD=1283"
+    volumes:
+      - postgres_volume:/var/lib/postgresql/data
+
+  koneshgar.api:
+    image: ${DOCKER_REGISTRY-}koneshgarapi
+    restart: always
+    build:
+      context: .
+      dockerfile: Koneshgar.Api/Dockerfile
+    ports:
+      - "5129:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      # - "ConnectionStrings:PostgreSqlConnection=User ID=postgres; Password=1283; Server=tasksdb; Port=5432;Database=Tasks;Integrated Security=true;"
+      - "ConnectionStrings:PostgreSqlConnection=User ID=postgres; Password=1283; Server=tasksdb; Port=5432;Database=Tasks;"
+      
+volumes:
+  postgres_volume:
